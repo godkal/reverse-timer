@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>역산타이머</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="top">
+      <p class="now-label">현재 시각</p>
+      <p id="nowTime" class="now-time">--:--:--</p>
+      <h1 class="title">역산타이머</h1>
+      <p id="statusBadge" class="status-badge waiting">대기</p>
+    </header>
+
+    <section id="hero" class="hero waiting" aria-live="polite">
+      <h2 id="statusMessage" class="status-message">도착 시각을 입력하세요</h2>
+      <p id="statusSubMessage" class="status-sub">입력값을 바꾸면 결과가 바로 업데이트됩니다.</p>
+    </section>
+
+    <section class="card">
+      <h3>입력</h3>
+      <div class="field">
+        <label for="targetArrivalTime">도착 목표 시각</label>
+        <input id="targetArrivalTime" type="time" required>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="travelMinutes">이동 시간(분)</label>
+          <input id="travelMinutes" type="number" min="0" step="1" placeholder="예: 35">
+        </div>
+        <div class="field">
+          <label for="bufferMinutes">여유 시간(분)</label>
+          <input id="bufferMinutes" type="number" min="0" step="1" placeholder="기본 15">
+        </div>
+      </div>
+      <div class="field">
+        <label for="prepMinutes">준비 시간(분)</label>
+        <input id="prepMinutes" type="number" min="0" step="1" placeholder="기본 30">
+      </div>
+      <div class="preset-wrap">
+        <p class="preset-title">준비 프리셋</p>
+        <div class="preset-row">
+          <button class="preset-btn" data-minutes="20" type="button">급함 (20)</button>
+          <button class="preset-btn" data-minutes="30" type="button">보통 (30)</button>
+          <button class="preset-btn" data-minutes="45" type="button">여유 (45)</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>핵심 결과</h3>
+      <dl class="result-grid">
+        <div>
+          <dt>준비 시작</dt>
+          <dd id="prepStartTime">--:--</dd>
+        </div>
+        <div>
+          <dt>출발</dt>
+          <dd id="leaveTime">--:--</dd>
+        </div>
+        <div>
+          <dt>도착 목표</dt>
+          <dd id="targetDisplay">--:--</dd>
+        </div>
+      </dl>
+      <dl class="result-grid">
+        <div>
+          <dt>준비 시작까지</dt>
+          <dd id="timeUntilPrepStart">--:--:--</dd>
+        </div>
+        <div>
+          <dt>출발까지</dt>
+          <dd id="timeUntilLeave">--:--:--</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="card">
+      <button id="toggleDetail" class="toggle-detail" type="button" aria-expanded="false">상세 보기 ▼</button>
+      <div id="detailSection" class="detail hidden">
+        <h3>상세 정보</h3>
+        <div class="timeline">
+          <div><span>현재</span><strong id="timelineNow">--:--</strong></div>
+          <div><span>준비 시작</span><strong id="timelinePrep">--:--</strong></div>
+          <div><span>출발</span><strong id="timelineLeave">--:--</strong></div>
+          <div><span>도착 목표</span><strong id="timelineTarget">--:--</strong></div>
+        </div>
+        <p id="formulaText" class="formula">공식: 준비 시작 = 도착 목표 - 여유 - 이동 - 준비</p>
+        <h3>설정</h3>
+        <div class="field-grid">
+          <div class="field">
+            <label for="defaultPrepMinutes">기본 준비 시간(분)</label>
+            <input id="defaultPrepMinutes" type="number" min="0" step="1">
+          </div>
+          <div class="field">
+            <label for="defaultBufferMinutes">기본 여유 시간(분)</label>
+            <input id="defaultBufferMinutes" type="number" min="0" step="1">
+          </div>
+        </div>
+        <div class="field-grid">
+          <label class="toggle">
+            <input id="soundEnabled" type="checkbox">
+            <span>소리 알림 사용</span>
+          </label>
+          <label class="toggle">
+            <input id="vibrationEnabled" type="checkbox">
+            <span>진동 알림 사용</span>
+          </label>
+        </div>
+        <button id="saveDefaultsBtn" class="save-btn" type="button">기본값 저장</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
