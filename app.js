@@ -39,7 +39,6 @@ const els = {
 };
 
 let appState = {
-  currentStatus: "waiting",
   lastAlertedStatus: null,
 };
 
@@ -103,7 +102,6 @@ function computeModel(now, input) {
 
   const leave = new Date(targetArrival.getTime() - (buffer + travel) * 60 * 1000);
   const prepStart = new Date(leave.getTime() - prep * 60 * 1000);
-
   const secondsUntilPrepStart = Math.floor((prepStart.getTime() - now.getTime()) / 1000);
   const secondsUntilLeave = Math.floor((leave.getTime() - now.getTime()) / 1000);
   const secondsUntilTarget = Math.floor((targetArrival.getTime() - now.getTime()) / 1000);
@@ -179,7 +177,7 @@ function statusMessage(model) {
     case "late": {
       const delayed = Math.max(0, Math.ceil(-model.secondsUntilTarget / 60));
       return {
-        main: "이미 목표 도착 시각이 지났습니다. 즉시 이동하세요",
+        main: "이미 목표 도착 시각이 지났습니다",
         sub: `현재 지연 ${delayed}분`,
       };
     }
@@ -197,7 +195,8 @@ function supportsVibration() {
 
 function playBeep() {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioContext();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = "sine";
@@ -208,7 +207,7 @@ function playBeep() {
     osc.start();
     osc.stop(ctx.currentTime + 0.15);
   } catch (_) {
-    // 브라우저 정책으로 실패해도 UI 흐름 유지
+    // Some browsers block audio until the user interacts with the page.
   }
 }
 
@@ -308,7 +307,6 @@ function loadStorage() {
   const recentTravel = toNonNegativeInt(localStorage.getItem(STORAGE_KEYS.recentTravelMinutes));
   const sound = localStorage.getItem(STORAGE_KEYS.alertsEnabledSound) === "true";
   const vibration = localStorage.getItem(STORAGE_KEYS.alertsEnabledVibration) === "true";
-
   const prep = defaultPrep ?? 30;
   const buffer = defaultBuffer ?? 15;
 
@@ -332,8 +330,8 @@ function wireEvents() {
 
   for (const btn of document.querySelectorAll(".preset-btn")) {
     btn.addEventListener("click", () => {
-      const m = btn.getAttribute("data-minutes");
-      els.prepMinutes.value = m;
+      const minutes = btn.getAttribute("data-minutes");
+      els.prepMinutes.value = minutes;
       updateUI();
       saveStorage();
     });
@@ -354,7 +352,7 @@ function wireEvents() {
   els.toggleDetail.addEventListener("click", () => {
     const isHidden = els.detailSection.classList.toggle("hidden");
     els.toggleDetail.setAttribute("aria-expanded", String(!isHidden));
-    els.toggleDetail.textContent = isHidden ? "상세 보기 ▼" : "상세 닫기 ▲";
+    els.toggleDetail.textContent = isHidden ? "상세 보기" : "상세 닫기";
   });
 }
 
